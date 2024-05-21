@@ -1,4 +1,4 @@
-# VMSBackup
+# VMSBackup (Python)
 OpenVMS Save Set Reader (Python)
 
 This is a Python port of https://github.com/TonyBUK/VMSBackup.  It has several advantages, and (currently) one big disadvantage over the original.

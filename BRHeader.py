@@ -40,51 +40,51 @@ class BRHeader(BaseHeader.BaseHeader) :
     #end
 
     def W_RSIZE(self) -> int :
-        return self.kAddressData.get("W_RSIZE", self.kBuffer)
+        return self.kAddressData.get("W_RSIZE", self.kBuffer, self.kCache)
     #end
 
     def W_RTYPE(self) -> int :
-        return self.kAddressData.get("W_RTYPE", self.kBuffer)
+        return self.kAddressData.get("W_RTYPE", self.kBuffer, self.kCache)
     #end
 
     def L_FLAGS(self) -> int :
-        return self.kAddressData.get("L_FLAGS", self.kBuffer)
+        return self.kAddressData.get("L_FLAGS", self.kBuffer, self.kCache)
     #end
 
     def V_BADDATA(self) -> bool :
-        return (self.kAddressData.get("V_BADDATA", self.kBuffer) & 0x80) == 0x80
+        return (self.kAddressData.get("V_BADDATA", self.kBuffer, self.kCache) & 0x80) == 0x80
     #end
 
     def V_DIRECTORY(self) -> bool :
-        return (self.kAddressData.get("V_DIRECTORY", self.kBuffer) & 0x40) == 0x40
+        return (self.kAddressData.get("V_DIRECTORY", self.kBuffer, self.kCache) & 0x40) == 0x40
     #end
 
     def V_NONSEQUENTIAL(self) -> bool :
-        return (self.kAddressData.get("V_NONSEQUENTIAL", self.kBuffer) & 0x20) == 0x20
+        return (self.kAddressData.get("V_NONSEQUENTIAL", self.kBuffer, self.kCache) & 0x20) == 0x20
     #end
 
     def V_BLOCKERRS(self) -> bool :
-        return (self.kAddressData.get("V_BLOCKERRS", self.kBuffer) & 0x10) == 0x10
+        return (self.kAddressData.get("V_BLOCKERRS", self.kBuffer, self.kCache) & 0x10) == 0x10
     #end
 
     def V_ALIAS_ENTRY(self) -> bool :
-        return (self.kAddressData.get("V_ALIAS_ENTRY", self.kBuffer) & 0x08) == 0x08
+        return (self.kAddressData.get("V_ALIAS_ENTRY", self.kBuffer, self.kCache) & 0x08) == 0x08
     #end
 
     def V_HEADONLY(self) -> bool :
-        return (self.kAddressData.get("V_HEADONLY", self.kBuffer) & 0x04) == 0x04
+        return (self.kAddressData.get("V_HEADONLY", self.kBuffer, self.kCache) & 0x04) == 0x04
     #end
 
     def L_ADDRESS(self) -> int :
-        return self.kAddressData.get("L_ADDRESS", self.kBuffer)
+        return self.kAddressData.get("L_ADDRESS", self.kBuffer, self.kCache)
     #end
 
     def W_BLOCKFLAGS(self) -> int :
-        return self.kAddressData.get("W_BLOCKFLAGS", self.kBuffer)
+        return self.kAddressData.get("W_BLOCKFLAGS", self.kBuffer, self.kCache)
     #end
 
     def W_RESERVED(self) -> int :
-        return self.kAddressData.get("W_RESERVED", self.kBuffer)
+        return self.kAddressData.get("W_RESERVED", self.kBuffer, self.kCache)
     #end
 
     def GetLength(self) -> bool :

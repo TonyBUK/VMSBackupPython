@@ -49,143 +49,143 @@ class BBHeader(BaseHeader.BaseHeader) :
     #end
 
     def W_SIZE(self) -> int :
-        return self.kAddressData.get("W_SIZE", self.kBuffer)
+        return self.kAddressData.get("W_SIZE", self.kBuffer, self.kCache)
     #end
 
     def W_OPSYS(self) -> int :
-        return self.kAddressData.get("W_OPSYS", self.kBuffer)
+        return self.kAddressData.get("W_OPSYS", self.kBuffer, self.kCache)
     #end
 
     def W_SUBSYS(self) -> int :
-        return self.kAddressData.get("W_SUBSYS", self.kBuffer)
+        return self.kAddressData.get("W_SUBSYS", self.kBuffer, self.kCache)
     #end
 
     def W_APPLIC(self) -> int :
-        return self.kAddressData.get("W_APPLIC", self.kBuffer)
+        return self.kAddressData.get("W_APPLIC", self.kBuffer, self.kCache)
     #end
 
     def L_NUMBER(self) -> int :
-        return self.kAddressData.get("L_NUMBER", self.kBuffer)
+        return self.kAddressData.get("L_NUMBER", self.kBuffer, self.kCache)
     #end
 
     def W_STRUCLEV(self) -> int :
-        return self.kAddressData.get("W_STRUCLEV", self.kBuffer)
+        return self.kAddressData.get("W_STRUCLEV", self.kBuffer, self.kCache)
     #end
 
     def B_STRUCVER(self) -> int :
-        return self.kAddressData.get("B_STRUCVER", self.kBuffer)
+        return self.kAddressData.get("B_STRUCVER", self.kBuffer, self.kCache)
     #end
 
     def B_STRUCLEV(self) -> int :
-        return self.kAddressData.get("B_STRUCLEV", self.kBuffer)
+        return self.kAddressData.get("B_STRUCLEV", self.kBuffer, self.kCache)
     #end
 
     def W_VOLNUM(self) -> int :
-        return self.kAddressData.get("W_VOLNUM", self.kBuffer)
+        return self.kAddressData.get("W_VOLNUM", self.kBuffer, self.kCache)
     #end
 
     def L_CRC(self) -> int :
-        return self.kAddressData.get("L_CRC", self.kBuffer)
+        return self.kAddressData.get("L_CRC", self.kBuffer, self.kCache)
     #end
 
     def L_BLOCKSIZE(self) -> int :
-        return self.kAddressData.get("L_BLOCKSIZE", self.kBuffer)
+        return self.kAddressData.get("L_BLOCKSIZE", self.kBuffer, self.kCache)
     #end
 
     def L_FLAGS(self) -> int :
-        return self.kAddressData.get("L_FLAGS", self.kBuffer)
+        return self.kAddressData.get("L_FLAGS", self.kBuffer, self.kCache)
     #end
 
     def V_NOCRC(self) -> int :
-        return self.kAddressData.get("V_NOCRC", self.kBuffer)
+        return self.kAddressData.get("V_NOCRC", self.kBuffer, self.kCache)
     #end
 
     def T_SSNAME(self) -> str :
-        return "".join(map(chr,[k for k in self.kAddressData.get("T_SSNAME", self.kBuffer)[1:] if k > 0]))
+        return "".join([chr(k) for k in self.kAddressData.get("T_SSNAME", self.kBuffer, self.kCache)[1:] if k > 0])
     #end
 
     def W_FID(self) -> int :
-        return self.kAddressData.get("W_FID", self.kBuffer)
+        return self.kAddressData.get("W_FID", self.kBuffer, self.kCache)
     #end
 
     def W_FID_NUM(self) -> int :
-        return self.kAddressData.get("W_FID_NUM", self.kBuffer)
+        return self.kAddressData.get("W_FID_NUM", self.kBuffer, self.kCache)
     #end
 
     def W_FID_SEQ(self) -> int :
-        return self.kAddressData.get("W_FID_SEQ", self.kBuffer)
+        return self.kAddressData.get("W_FID_SEQ", self.kBuffer, self.kCache)
     #end
 
     def W_FID_RVN(self) -> int :
-        return self.kAddressData.get("W_FID_RVN", self.kBuffer)
+        return self.kAddressData.get("W_FID_RVN", self.kBuffer, self.kCache)
     #end
 
     def B_FID_RVN(self) -> int :
-        return self.kAddressData.get("B_FID_RVN", self.kBuffer)
+        return self.kAddressData.get("B_FID_RVN", self.kBuffer, self.kCache)
     #end
 
     def B_FID_NMX(self) -> int :
-        return self.kAddressData.get("B_FID_NMX", self.kBuffer)
+        return self.kAddressData.get("B_FID_NMX", self.kBuffer, self.kCache)
     #end
 
     def W_DID(self) -> int :
-        return self.kAddressData.get("W_DID", self.kBuffer)
+        return self.kAddressData.get("W_DID", self.kBuffer, self.kCache)
     #end
 
     def W_DID_NUM(self) -> int :
-        return self.kAddressData.get("W_DID_NUM", self.kBuffer)
+        return self.kAddressData.get("W_DID_NUM", self.kBuffer, self.kCache)
     #end
 
     def W_DID_SEQ(self) -> int :
-        return self.kAddressData.get("W_DID_SEQ", self.kBuffer)
+        return self.kAddressData.get("W_DID_SEQ", self.kBuffer, self.kCache)
     #end
 
     def W_DID_RVN(self) -> int :
-        return self.kAddressData.get("W_DID_RVN", self.kBuffer)
+        return self.kAddressData.get("W_DID_RVN", self.kBuffer, self.kCache)
     #end
 
     def B_DID_RVN(self) -> int :
-        return self.kAddressData.get("B_DID_RVN", self.kBuffer)
+        return self.kAddressData.get("B_DID_RVN", self.kBuffer, self.kCache)
     #end
 
     def B_DID_NMX(self) -> int :
-        return self.kAddressData.get("B_DID_NMX", self.kBuffer)
+        return self.kAddressData.get("B_DID_NMX", self.kBuffer, self.kCache)
     #end
 
     def T_FILENAME(self) -> int :
-        return self.kAddressData.get("T_FILENAME", self.kBuffer)
+        return self.kAddressData.get("T_FILENAME", self.kBuffer, self.kCache)
     #end
 
     def B_RTYPE(self) -> int :
-        return self.kAddressData.get("B_RTYPE", self.kBuffer)
+        return self.kAddressData.get("B_RTYPE", self.kBuffer, self.kCache)
     #end
 
     def B_RATTRIB(self) -> int :
-        return self.kAddressData.get("B_RATTRIB", self.kBuffer)
+        return self.kAddressData.get("B_RATTRIB", self.kBuffer, self.kCache)
     #end
 
     def W_RSIZE(self) -> int :
-        return self.kAddressData.get("W_RSIZE", self.kBuffer)
+        return self.kAddressData.get("W_RSIZE", self.kBuffer, self.kCache)
     #end
 
     def B_BKTSIZE(self) -> int :
-        return self.kAddressData.get("B_BKTSIZE", self.kBuffer)
+        return self.kAddressData.get("B_BKTSIZE", self.kBuffer, self.kCache)
     #end
 
     def B_VFCSIZE(self) -> int :
-        return self.kAddressData.get("B_VFCSIZE", self.kBuffer)
+        return self.kAddressData.get("B_VFCSIZE", self.kBuffer, self.kCache)
     #end
 
     def W_MAXREC(self) -> int :
-        return self.kAddressData.get("W_MAXREC", self.kBuffer)
+        return self.kAddressData.get("W_MAXREC", self.kBuffer, self.kCache)
     #end
 
     def L_FILESIZE(self) -> int :
-        return self.kAddressData.get("L_FILESIZE", self.kBuffer)
+        return self.kAddressData.get("L_FILESIZE", self.kBuffer, self.kCache)
     #end
 
     def W_CHECKSUM(self) -> int :
-        return self.kAddressData.get("W_CHECKSUM", self.kBuffer)
+        return self.kAddressData.get("W_CHECKSUM", self.kBuffer, self.kCache)
     #end
 
     def GetLength(self) -> bool :
@@ -199,8 +199,5 @@ class BBHeader(BaseHeader.BaseHeader) :
         return (self.L_BLOCKSIZE () == 0) or (self.L_BLOCKSIZE () == kBaseHeader.L_BLOCKSIZE ())
 
     #end
-
-    kAddressData : VMSBackupHelper.addr
-    kBuffer : bytes
 
 #end

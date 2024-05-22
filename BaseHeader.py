@@ -3,8 +3,15 @@ import VMSBackupRAMCache
 
 class BaseHeader :
 
+    def __init__(self) -> None :
+
+        self.kCache  = {}
+        self.kBuffer = bytearray()
+
+    #end
+
     def LoadHeaderFromFile(self, kFile : VMSBackupRAMCache.VMSBackupRAMCache) -> None :
-        self.kBuffer = kFile.read(self.kAddressData.length())
+        self.kBuffer += kFile.read(self.kAddressData.length())
     #end
 
     def ExtendHeaderFromFile(self, kFile : VMSBackupRAMCache.VMSBackupRAMCache) -> None :
@@ -15,7 +22,7 @@ class BaseHeader :
 
     def LoadHeaderFromBuffer(self, kBlock : bytes) -> None :
         assert(len(kBlock) >= self.kAddressData.length())
-        self.kBuffer = kBlock[0:self.kAddressData.length()]
+        self.kBuffer += kBlock[0:self.kAddressData.length()]
     #end
 
     def ExtendHeaderFromBuffer(self, kBlock : bytes) -> None :
@@ -25,6 +32,7 @@ class BaseHeader :
     #end
 
     kAddressData : VMSBackupHelper.addr = None
-    kBuffer      : bytes
+    kBuffer      : bytearray            = None
+    kCache       : dict                 = None
 
 #end

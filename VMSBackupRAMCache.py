@@ -31,7 +31,7 @@ class VMSBackupRAMCache :
 
             if self.nFilePointer >= len(self.kRAMCache) :
                 self.kFileHandle.seek(len(self.kRAMCache), os.SEEK_SET)
-                self.kRAMCache.extend(self.kFileHandle.read(self.nFilePointer - len(self.kRAMCache)))
+                self.kRAMCache += self.kFileHandle.read(self.nFilePointer - len(self.kRAMCache))
                 if self.nFilePointer > len(self.kRAMCache) :
                     self.nFilePointer  = len(self.kRAMCache)
                 #end

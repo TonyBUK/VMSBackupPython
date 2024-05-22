@@ -9,7 +9,7 @@ Advantages
 - Should be endian correct for whatever OS you throw at it, providing you have a Python interpreter.
 
 Disadvantages
-- Approximately 3 times slower at extracting data.
+- Approximately 50% slower at extracting data.
 
 I will be working on performannce over time to get things more in line with the C performance where possible.
 
@@ -20,6 +20,8 @@ For the most part, this is a relatively useful way of grabbing text/binary data 
 One very nice feature of this tool that I'm pretty proud of is the auto mode (by default) where it will attempt to auto-detect between text/binary files to produce something that's compatible with your OS of choice.
 
 ***Updates***
+
+1.7 fixes one minor bug where extra new lines might be present when not expected, but is really a throughput optimisation update to at least try to get the Python version in the same ballpark as the C++ variant.
 
 1.6 is the first release of the Python version of https://github.com/TonyBUK/VMSBackup.  This implements the following fixed rom 1.5.
 

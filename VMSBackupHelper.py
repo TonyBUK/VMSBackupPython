@@ -55,34 +55,6 @@ class addr :
 
     #end
 
-    def replaceLast(self, nMaxAddress : int, kName : str, kBaseAddr : str | typing.Any, kBaseLength : str | typing.Any, kSize : sizeof, nArraySize = 1) -> None :
-
-        assert(kName in self.kLookup)
-        assert(self.kLookup[kName] == (len(self.kElements) - 1))
-
-        nAddress = 0
-        nSize    = kSize.getValue() * nArraySize
-
-        self.nMaxAddress = nMaxAddress
-
-        if None != kBaseAddr :
-            assert(kBaseAddr in self.kLookup)
-            nAddress += self.kElements[self.kLookup[kBaseAddr]][0]
-        #end
-
-        if None != kBaseLength :
-            assert(kBaseLength in self.kLookup)
-            nAddress += self.kElements[self.kLookup[kBaseAddr]][1]
-        #end
-
-        self.kElements[-1] = tuple([nAddress, nSize, kUnpackType[kSize.name], kSize])
-    
-        if (nAddress + nSize) > self.nMaxAddress :
-            self.nMaxAddress = nAddress + nSize
-        #end
-
-    #end
-
     def add(self, kName : str, kBaseAddr : str | typing.Any, kBaseLength : str | typing.Any, kSize : sizeof, nArraySize = 1) -> None :
 
         assert(kName not in self.kLookup)
@@ -109,20 +81,34 @@ class addr :
 
     #end
 
-    def get(self, kName : str, kDataBuffer : bytes) -> int :
+    def get(self, kName : str, kDataBuffer : bytes, kCache : dict) -> int :
 
-        assert(kName in self.kLookup)
+        if kName in kCache :
 
-        kElementMetaData = self.kElements[self.kLookup[kName]]
-        nArraySize = kElementMetaData[1]//kElementMetaData[3].getValue()
-        kElementData = struct.unpack_from(kElementMetaData[2][0] + str(nArraySize) + kElementMetaData[2][1], kDataBuffer, kElementMetaData[0])
+            return kCache[kName]
 
-        if nArraySize == 1 :
-            assert(len(kElementData) == 1)
-            return kElementData[0]
         else :
-            assert(len(kElementData) == nArraySize)
-            return kElementData
+
+            assert(kName in self.kLookup)
+
+            kElementMetaData = self.kElements[self.kLookup[kName]]
+            nArraySize = kElementMetaData[1]//kElementMetaData[3].getValue()
+            kElementData = struct.unpack_from(kElementMetaData[2][0] + str(nArraySize) + kElementMetaData[2][1], kDataBuffer, kElementMetaData[0])
+
+            if nArraySize == 1 :
+
+                assert(len(kElementData) == 1)
+                kCache[kName] = kElementData[0]
+                return kElementData[0]
+
+            else :
+
+                assert(len(kElementData) == nArraySize)
+                kCache[kName] = kElementData
+                return kElementData
+
+            #end
+
         #end
 
     #end

@@ -13,6 +13,12 @@ import datetime
 import math
 import struct
 
+# Calculate these once globally rather than recomputing each time when needed.
+__LINESEP         = bytes([ord(k) for k in os.linesep])
+__LINESEP_WINDOWS = bytes([ord(k) for k in "\r\n"])
+__CR              = ord('\r')
+__LF              = ord('\n')
+
 def FileNameWildCardCompare(kString : str, kWildCard : str) :
 
     # [] are frequently used in OpenVMS filenames, but to fnmatch, indicate ranges.
@@ -31,12 +37,12 @@ def VMSWriteEOL(kFileMetaData : VMSBackupTypes.VMSFileParameters, bForceEOL : bo
 
         if (kFileMetaData.nFilePointer >= kFileMetaData.nFileSize) and kFileMetaData.bLFDetected :
 
-            kFileMetaData.kFileHandle.write(bytes([ord(k) for k in os.linesep]))
+            kFileMetaData.kFileHandle.write(__LINESEP)
             kFileMetaData.bLFDetected = False
 
         elif bForceEOL :
 
-            kFileMetaData.kFileHandle.write(bytes([ord(k) for k in os.linesep]))
+            kFileMetaData.kFileHandle.write(__LINESEP)
 
         #end
 
@@ -49,43 +55,95 @@ def VMSWriteFile(kBlock : bytes, kFileMetaData : VMSBackupTypes.VMSFileParameter
     bLastElementWasLFCR = False
     bContainsLFCR       = False
 
+    # TODO: This is covering up a bug elsewhere where 0 byte writes are somehow being passed onwards...
+    if 0 == nDataLength :
+        return
+    #end
+
     if VMSBackupTypes.ExtractMode.ASCII == kFileMetaData.kMode :
 
-        for i,nByte in enumerate(kBlock[:nDataLength]) :
+        # Note: To improve throughput, ASCII Mode doesn't iterate one character at a time, and
+        #       instead finds all indices which contain the line seperators.  This allows burst
+        #       writing of everything in between.  This does improve average write time at the
+        #       expense of some additional complexity.
+        kIndicesOfInterest = [i for i,k in enumerate(kBlock[:nDataLength]) if k in __LINESEP_WINDOWS]
+        if 0 == len(kIndicesOfInterest) :
 
-            if (nByte == ord('\r')) and not kFileMetaData.bLFDetected :
+            # This would fall into functionality associated with:
+            # (__LF != kBlock[nCRLFIndex]) and kFileMetaData.bLFDetected :
+            if kFileMetaData.bLFDetected :
+
+                # This is not seen as a valid EOL, so normalise it
+                kFileMetaData.kFileHandle.write(__LINESEP)
+
+            #end
+
+            kFileMetaData.bLFDetected         = False
+            kFileMetaData.bLastElementWasLFCR = False
+
+            kFileMetaData.kFileHandle.write(kBlock[:nDataLength])
+            return
+
+        #end
+
+        # File I/O Typically likes being performed in large bursts, therefore we buffer the data
+        # into RAM first.
+        kBytes = bytearray()
+        nLastIndex = 0
+
+        for nCRLFIndex in kIndicesOfInterest :
+
+            if nCRLFIndex > nLastIndex :
+
+                # This would fall into functionality associated with:
+                # (__LF != kBlock[nCRLFIndex]) and kFileMetaData.bLFDetected :
+                if kFileMetaData.bLFDetected :
+
+                    # This is not seen as a valid EOL, so normalise it
+                    kBytes.extend(__LINESEP)
+
+                #end
+
+                kFileMetaData.bLFDetected         = False
+                kFileMetaData.bLastElementWasLFCR = False
+
+                kBytes.extend(kBlock[nLastIndex:nCRLFIndex])
+
+            #end
+
+            if __CR == kBlock[nCRLFIndex] and not kFileMetaData.bLFDetected :
 
                 # Do nothing whilst the EOL is assessed
                 kFileMetaData.bLFDetected   = True
 
                 # Indicate this data package contains an LF/CR entry
                 bContainsLFCR               = True
-                bLastElementWasLFCR         = (i+1) == nDataLength
+                bLastElementWasLFCR         = (nCRLFIndex+1) == nDataLength
 
-            elif (nByte == ord('\n')) and kFileMetaData.bLFDetected :
+            elif (__LF == kBlock[nCRLFIndex]) and kFileMetaData.bLFDetected :
             
                 # This file already contains standard EOL conventions
-                kFileMetaData.kFileHandle.write(bytes([ord(k) for k in os.linesep]))
+                kBytes += __LINESEP
                 kFileMetaData.bLFDetected = False
 
                 # Indicate this data package contains an LF/CR entry
                 bContainsLFCR               = True
-                bLastElementWasLFCR         = (i+1) == nDataLength
+                bLastElementWasLFCR         = (nCRLFIndex+1) == nDataLength
 
-            elif (nByte == ord('\n')) and not kFileMetaData.bLFDetected :
+            elif (__LF == kBlock[nCRLFIndex]) and not kFileMetaData.bLFDetected :
             
                 # This is not seen as a valid EOL, so normalise it
-                kFileMetaData.kFileHandle.write(bytes([ord(k) for k in os.linesep]))
+                kBytes += __LINESEP
                 kFileMetaData.bLFDetected = False
 
                 # Indicate this data package contains an LF/CR entry
                 bContainsLFCR               = True
-                bLastElementWasLFCR         = (i+1) == nDataLength
+                bLastElementWasLFCR         = (nCRLFIndex+1) == nDataLength
 
-            elif (nByte != ord('\n')) and kFileMetaData.bLFDetected :
+            elif (__LF != kBlock[nCRLFIndex]) and kFileMetaData.bLFDetected :
             
                 # This is not seen as a valid EOL, so normalise it
-                kFileMetaData.kFileHandle.write(bytes([ord(k) for k in os.linesep]))
+                kBytes += __LINESEP
                 kFileMetaData.bLFDetected = False
 
                 # Indicate this data package contains an LF/CR entry
@@ -93,17 +151,43 @@ def VMSWriteFile(kBlock : bytes, kFileMetaData : VMSBackupTypes.VMSFileParameter
                 
                 # Note: This indicates the *previous* byte was an LF/CR therefore the current
                 #       element isn't, hence no check to see if the Last Element is an LF/CR
-                
+
                 # Output the current byte since it contained non-EOL data
-                kFileMetaData.kFileHandle.write(bytes([nByte]))
+                kBytes.append(kBlock[nCRLFIndex])
 
             else :
 
-                # Output the Current Byte
-                kFileMetaData.kFileHandle.write(bytes([nByte]))
+                # Shouldn't Occur
+                assert(False)
+
+            #end
+                
+            nLastIndex = nCRLFIndex + 1
+
+        #end
+
+        # Handle the Last Few Elements        
+        if nLastIndex < nDataLength :
+
+            # This would fall into functionality associated with:
+            # (__LF != kBlock[nCRLFIndex]) and kFileMetaData.bLFDetected :
+            if kFileMetaData.bLFDetected :
+
+                # This is not seen as a valid EOL, so normalise it
+                kBytes.extend(__LINESEP)
 
             #end
 
+            kFileMetaData.bLFDetected         = False
+            kFileMetaData.bLastElementWasLFCR = False
+
+            kBytes.extend(kBlock[nLastIndex:nDataLength])
+
+        #end
+
+        # Output the Buffered Data for Writing
+        if len(kBytes) > 0 :
+            kFileMetaData.kFileHandle.write(kBytes)
         #end
 
     else :
@@ -119,15 +203,16 @@ def VMSWriteFile(kBlock : bytes, kFileMetaData : VMSBackupTypes.VMSFileParameter
 
 def CloseOpenFiles(kExtractStatus : dict) :
 
-    if None != kExtractStatus["Current"] :
-        if None != kExtractStatus["Current"].kFileHandle :
-            if kExtractStatus["Current"].nFilePointer != kExtractStatus["Current"].nFileSize :
-                print(f"Warning: {kExtractStatus["Current"].kFileName} extracted {kExtractStatus["Current"].nFilePointer}/{kExtractStatus["Current"].nFileSize} bytes.")
+    kFileMetaData = kExtractStatus["Current"]
+    if None != kFileMetaData :
+        if None != kFileMetaData.kFileHandle :
+            if kFileMetaData.nFilePointer != kFileMetaData.nFileSize :
+                print(f"Warning: {kFileMetaData.kFileName} extracted {kFileMetaData.nFilePointer}/{kFileMetaData.nFileSize} bytes.")
             #end
-#            assert(kExtractStatus["Current"].nFilePointer == kExtractStatus["Current"].nFileSize)
-            kExtractStatus["Current"].closeFile()
-            kExtractStatus["Current"] = None
+#            assert(kFileMetaData.nFilePointer == kFileMetaData.nFileSize)
+            kFileMetaData.closeFile()
         #end
+        kExtractStatus["Current"] = None
     #end
 
 #end

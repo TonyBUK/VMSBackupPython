@@ -74,7 +74,7 @@ The former expects a command line string based on the usage above.  The latter e
 
 Currently the file mask *considers* the directory as part of the filename, even if by default it's stripped out.  So if you need a specific file, you may need to use part of the folder name.  i.e.
 
-VMSBackup archive.bck -M:*]filename.txt;0
+python VMSBackup.py archive.bck -M:*]filename.txt;0
 
 Note: The version after the semi-colon follows OpenVMS rules, meaning:
 
@@ -89,7 +89,7 @@ And so on...  If there's enough demand I can probably tweak this.  However in my
 
 This should work as expected
 
-VMSBackup archive.bck -F -M:[mypath.in.vax.format]myfile.txt
+python VMSBackup.py archive.bck -F -M:[mypath.in.vax.format]myfile.txt
 
 This will then cause files extracted to look like:
 
@@ -107,7 +107,7 @@ Your OS will likely not allow that.
 
 Most file systems these days don't support file versioning natively within the file system itself.  Meaning if you want to extract a specific version, you *can* use the method outlined in *Extracting a Single File*, but if you need multiple versions extracted in one pass, the "-V" flag will come into play, which will append the file version onto the file name.  And chances are if you're doing so, you'll want to re-adjust the mask as follows:
 
-VMSBackup archive.bck -M:*.*;* -V
+python VMSBackup.py archive.bck -M:*.*;* -V
 
 The will cause extracted files to look like this:
 

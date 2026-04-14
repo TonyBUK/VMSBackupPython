@@ -3,7 +3,7 @@ import VMSBackupRAMCache
 import VMSBackupTypes
 import VMSBackupProcess
 
-__VMSVERSION__ = "1.7"
+__VMSVERSION__ = "1.8"
 
 # VMS Backup Utility
 #

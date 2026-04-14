@@ -214,7 +214,7 @@ class BSFileHeader :
     # TODO: Should this 512 be defined somewhere?
     def FILESIZEBYTES(self) -> int :
         kRECATTR = self.RECATTR(kSizeOf=VMSBackupHelper.sizeof.uint16_t)
-        return (kRECATTR[5] * 512) - 512 + kRECATTR[6]
+        return (((kRECATTR[4] << 16) + kRECATTR[5]) * 512) - 512 + kRECATTR[6]
     #end
 
     def RECSIZE(self) -> int :

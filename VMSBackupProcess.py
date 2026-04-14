@@ -344,10 +344,11 @@ def DumpBriefFileHeader(kFileHeader : BSFileHeader.BSFileHeader, nSubSecondResol
 
     # Output the File Size
     kRECATTR = kFileHeader.RECATTR(kSizeOf=VMSBackupHelper.sizeof.uint16_t)
+    nSize = (kRECATTR[4] << 16)
     if kRECATTR[6] == 0 :
-        print(f"                      Size: {kRECATTR[5] - 1:7}/{kFileHeader.FILESIZE():<7}", end="")
+        print(f"                      Size: {nSize + kRECATTR[5] - 1:7}/{kFileHeader.FILESIZE():<7}", end="")
     else :
-        print(f"                      Size: {kRECATTR[5]:7}/{kFileHeader.FILESIZE():<7}", end="")
+        print(f"                      Size: {nSize + kRECATTR[5]:7}/{kFileHeader.FILESIZE():<7}", end="")
     #end
 
     # Output the Creation Date
@@ -374,10 +375,11 @@ def DumpFullFileHeader(kFileHeader : BSFileHeader.BSFileHeader, kHeader : BRHead
 
         # Output the File Size
         kRECATTR = kFileHeader.RECATTR(kSizeOf=VMSBackupHelper.sizeof.uint16_t)
+        nSize = (kRECATTR[4] << 16)
         if kRECATTR[6] == 0 :
-            print(f"Size: {(kRECATTR[5] - 1):12}/{kFileHeader.FILESIZE():<12}", end="")
+            print(f"Size: {(nSize + kRECATTR[5] - 1):12}/{kFileHeader.FILESIZE():<12}", end="")
         else :
-            print(f"Size: {kRECATTR[5]:12}/{kFileHeader.FILESIZE():<12}", end="")
+            print(f"Size: {nSize + kRECATTR[5]:12}/{kFileHeader.FILESIZE():<12}", end="")
         #end
 
         # Output the Owner

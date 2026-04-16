@@ -21,6 +21,8 @@ One very nice feature of this tool that I'm pretty proud of is the auto mode (by
 
 ***Updates***
 
+1.8 fixes large file extraction, where files using more than 65,535 blocks were truncated.
+
 1.7 fixes one minor bug where extra new lines might be present when not expected, but is really a throughput optimisation update to at least try to get the Python version in the same ballpark as the C++ variant.
 
 1.6 is the first release of the Python version of https://github.com/TonyBUK/VMSBackup.  This implements the following fixed rom 1.5.
